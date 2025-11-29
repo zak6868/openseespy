@@ -11,10 +11,22 @@ class Motif:
         base_x, base_y, base_z = origin.x, origin.y, origin.z
 
         coords = []
-        for (lx, ly, lz) in self.local_nodes:
-            x = base_x + lx*dx
-            y = base_y + ly*dy
-            z = base_z + lz*dz
+        for local in self.local_nodes:
+            if len(local) == 2:      # Motif 2D : (lx, lz)
+                lx, lz = local
+                x = base_x + lx * dx
+                y = base_y            # y = 0 en 2D
+                z = base_z + lz * dz
+
+            elif len(local) == 3:    # Motif 3D : (lx, ly, lz)
+                lx, ly, lz = local
+                x = base_x + lx * dx
+                y = base_y + ly * dy
+                z = base_z + lz * dz
+
+            else:
+                raise ValueError("local_nodes must be tuples of size 2 (2D) or 3 (3D)")
+
             coords.append((x, y, z))
 
         id_map = {}
@@ -38,3 +50,4 @@ class Motif:
                     break
             if not exists:
                 model.add_element(ni, nj, area, E)
+
